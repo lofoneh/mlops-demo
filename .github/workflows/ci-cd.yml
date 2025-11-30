@@ -1,0 +1,16 @@
+name: CI/CD - MLOps (example)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build docker image
+        run: |
+          docker build -t fraud-model:ci -f src/inference/Dockerfile src/inference
+      - name: Run unit tests (placeholder)
+        run: echo "no tests yet"

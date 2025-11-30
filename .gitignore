@@ -1,0 +1,13 @@
+__pycache__/
+.mlflow/
+mlflow/artifacts/
+mlflow/mlflow.db
+*.pyc
+.env
+.venv
+venv/
+env/
+.idea/
+.vscode/
+.DS_Store
+```

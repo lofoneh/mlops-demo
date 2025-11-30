@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-model
+  namespace: mlops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fraud-model
+  template:
+    metadata:
+      labels:
+        app: fraud-model
+    spec:
+      containers:
+      - name: fraud-model
+        image: fraud-model:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: MODEL_URI
+            value: "models:/fraud-model/Production"
+        ports:
+          - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
