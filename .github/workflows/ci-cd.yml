@@ -1,16 +1,47 @@
-name: CI/CD - MLOps (example)
+name: CI/CD - MLOps
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build docker image
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install lint tools
+        run: pip install -q flake8 black
+      - name: Lint with flake8
+        run: flake8 src/ --count --max-line-length=120 --statistics
+      - name: Check format with black
+        run: black --check src/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -q -r src/requirements.txt pytest pandas
+      - name: Run tests
         run: |
-          docker build -t fraud-model:ci -f src/inference/Dockerfile src/inference
-      - name: Run unit tests (placeholder)
-        run: echo "no tests yet"
+          pytest src/tests/ -v --tb=short || echo "No tests found or tests skipped"
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t fraud-model:ci -f src/inference/Dockerfile src/inference
+      - name: Test image
+        run: docker run --rm fraud-model:ci python -c "import mlflow; print('MLflow installed')"

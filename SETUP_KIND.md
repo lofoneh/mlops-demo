@@ -4,7 +4,7 @@
 - Docker (desktop or engine) — ensure it's running.
 - kind (`brew install kind` or https://kind.sigs.k8s.io/)
 - kubectl (matching k8s version)
-- Python 3.11
+- Python 3.13
 - git
 
 ## Ideal kind profile for MLOps practice
