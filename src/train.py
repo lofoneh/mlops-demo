@@ -1,10 +1,9 @@
-import os
 import sys
 import argparse
 import logging
 import mlflow
 from mlflow import sklearn as mlflow_sklearn
-import pandas as pd
+
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, accuracy_score
@@ -14,6 +13,7 @@ from features import load_data, preprocess
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
 
 def train(args):
     """Train a RandomForest model and log to MLflow."""
@@ -55,6 +55,8 @@ def train(args):
     except Exception as e:
         logger.error("Training failed: %s", str(e), exc_info=True)
         sys.exit(1)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train fraud detection model with MLflow tracking')
     parser.add_argument('--data-path', default='data/transactions.csv', help='Path to CSV data file')

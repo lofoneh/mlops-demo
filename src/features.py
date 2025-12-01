@@ -3,6 +3,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def load_data(path: str) -> pd.DataFrame:
     """Load CSV data with error handling."""
     try:
@@ -24,15 +25,15 @@ def preprocess(df: pd.DataFrame) -> tuple:
     
     X = df.drop(columns=['is_fraud'])
     y = df['is_fraud']
-    
+
     # Log initial feature info
     n_numeric = len(X.select_dtypes(include=['number']).columns)
     n_non_numeric = len(X.columns) - n_numeric
     if n_non_numeric > 0:
         logger.info("Dropping %d non-numeric columns", n_non_numeric)
-    
+
     # Extract numeric columns and fill NaN
     X = X.select_dtypes(include=['number']).fillna(0)
     logger.info("Features after preprocessing: %d numeric columns", X.shape[1])
-    
+
     return X, y
