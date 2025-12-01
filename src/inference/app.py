@@ -7,7 +7,6 @@ import mlflow.pyfunc
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from mlflow.exceptions import MlflowException
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from pydantic import BaseModel
 from fastapi.responses import Response
@@ -102,26 +101,31 @@ if model is None:
 REQUEST_COUNT = Counter("http_requests_total", "Total HTTP requests", ["method", "endpoint"])
 REQUEST_LATENCY = Histogram("http_request_latency_seconds", "Request latency", ["endpoint"])
 
+
 class Transaction(BaseModel):
     amount: float
     feature_1: float
     feature_2: float
 
+
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": model is not None, "model_error": _load_error}
+
 
 @app.post("/predict")
 def predict(tx: Transaction):
     """Predict fraud probability for a transaction."""
     REQUEST_COUNT.labels(method="POST", endpoint="/predict").inc()
     start = time()
-    
+
     # Guard: if the model failed to load, return 503 with guidance
     if model is None:
         detail = (
-            "Model not loaded. Startup error: " + (_load_error or "unknown") + ". "
-            "Set MODEL_URI to a valid path (e.g. 'runs:/<run_id>/model') or register the model in MLflow Model Registry."
+            "Model not loaded. Startup error: "
+            + (_load_error or "unknown")
+            + ". Set MODEL_URI to a valid path (e.g. 'runs:/<run_id>/model') or register the model "
+            + "in MLflow Model Registry."
         )
         raise HTTPException(status_code=503, detail=detail)
 

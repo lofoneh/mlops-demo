@@ -14,7 +14,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13'
       - name: Install lint tools
         run: pip install -q flake8 black
       - name: Lint with flake8
@@ -29,7 +29,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.13'
       - name: Install dependencies
         run: pip install -q -r src/requirements.txt pytest pandas
       - name: Run tests
